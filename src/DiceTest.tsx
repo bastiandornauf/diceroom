@@ -1,18 +1,29 @@
 import { useState } from 'react';
-import { rollDice, type DiceResult } from './dice';
+import { rollDice, DICE_EXAMPLES, type DiceResult } from './dice-main';
 
 export function DiceTest() {
   const [expression, setExpression] = useState('2d6');
   const [result, setResult] = useState<DiceResult | null>(null);
 
+  const [variables, setVariables] = useState<Record<string, number>>({
+    STR: 3,
+    DEX: 2,
+    CON: 1,
+    PROF: 2,
+    ADV: 1,
+    DIS: 0,
+    BONUS: 0,
+    TN: 15
+  });
+
   const handleRoll = () => {
-    const rollResult = rollDice(expression);
+    const rollResult = rollDice(expression, variables);
     setResult(rollResult);
   };
 
   const testExpression = (expr: string) => {
     setExpression(expr);
-    const rollResult = rollDice(expr);
+    const rollResult = rollDice(expr, variables);
     setResult(rollResult);
   };
 
@@ -73,24 +84,69 @@ export function DiceTest() {
           <p><strong>Breakdown:</strong> {result.breakdown}</p>
           <p><strong>Individual Rolls:</strong> [{result.rolls.join(', ')}]</p>
           
+          {/* Variables used */}
+          {result.variables && Object.keys(result.variables).length > 0 && (
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+              <strong>Variables:</strong>
+              {Object.entries(result.variables).map(([name, value]) => (
+                <span key={name} style={{ marginLeft: '10px' }}>@{name}={value}</span>
+              ))}
+            </div>
+          )}
+          
+          {/* Target result */}
+          {result.target && (
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: result.target.pass ? '#d4edda' : '#f8d7da', borderRadius: '4px' }}>
+              <strong>Target:</strong> {result.total} {result.target.op} {result.target.value} → 
+              <span style={{ fontWeight: 'bold', color: result.target.pass ? '#155724' : '#721c24' }}>
+                {result.target.pass ? 'PASS' : 'FAIL'}
+              </span>
+            </div>
+          )}
+
           {/* Daggerheart specific display */}
           {(result.hope !== undefined || result.fear !== undefined || result.tag) && (
             <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f4fd', borderRadius: '4px' }}>
               <strong>Daggerheart:</strong>
-              {result.hope && <span style={{ color: '#28a745', marginLeft: '10px' }}>Hope: {result.hope}</span>}
-              {result.fear && <span style={{ color: '#dc3545', marginLeft: '10px' }}>Fear: {result.fear}</span>}
+              {result.hope !== undefined && <span style={{ color: '#28a745', marginLeft: '10px' }}>Hope: {result.hope}</span>}
+              {result.fear !== undefined && <span style={{ color: '#dc3545', marginLeft: '10px' }}>Fear: {result.fear}</span>}
               {result.tag && <span style={{ color: '#6f42c1', marginLeft: '10px' }}>Tag: {result.tag}</span>}
+            </div>
+          )}
+          
+          {/* Success counting */}
+          {result.successes !== undefined && (
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e2f3ff', borderRadius: '4px' }}>
+              <strong>Successes:</strong> {result.successes}
             </div>
           )}
         </div>
       )}
+
+      {/* Variables Panel */}
+      <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+        <h3>Variables (used in expressions with @NAME):</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+          {Object.entries(variables).map(([name, value]) => (
+            <div key={name}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>@{name}:</label>
+              <input
+                type="number"
+                value={value}
+                onChange={(e) => setVariables(prev => ({ ...prev, [name]: parseInt(e.target.value) || 0 }))}
+                style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '2px' }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div style={{ marginTop: '30px' }}>
         <h3>Quick Test Buttons:</h3>
         
         <div style={{ marginBottom: '15px' }}>
           <h4>Basic Dice:</h4>
-          {['1d20', '2d6', '3d8+2', '1d12-1'].map((expr) => (
+          {DICE_EXAMPLES.basic.map((expr) => (
             <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
               {expr}
             </button>
@@ -98,8 +154,8 @@ export function DiceTest() {
         </div>
 
         <div style={{ marginBottom: '15px' }}>
-          <h4>RPG Features:</h4>
-          {['adv', 'dis', '4d6kh3', '3d6!', '5d10>=6'].map((expr) => (
+          <h4>Advanced Features:</h4>
+          {DICE_EXAMPLES.advanced.map((expr) => (
             <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
               {expr}
             </button>
@@ -108,7 +164,7 @@ export function DiceTest() {
 
         <div style={{ marginBottom: '15px' }}>
           <h4>Daggerheart:</h4>
-          {['dh', 'dh a2', 'dh d1', 'dh a2 d1', 'dh a3'].map((expr) => (
+          {DICE_EXAMPLES.daggerheart.map((expr) => (
             <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
               {expr}
             </button>
@@ -117,7 +173,7 @@ export function DiceTest() {
 
         <div style={{ marginBottom: '15px' }}>
           <h4>Special Dice:</h4>
-          {['4dF', '2d10!>=8', '6d6kl1'].map((expr) => (
+          {DICE_EXAMPLES.special.map((expr) => (
             <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
               {expr}
             </button>
