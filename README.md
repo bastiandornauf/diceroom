@@ -1,26 +1,31 @@
-Roadmap Overview - Pre-Rollout
-⚡ Phase 1: Core Fixes (A, B, C)
-Color & Name Backend → Funktionalität fertigstellen
-Admin Access Control → Nur für dich sichtbar
-Name Persistence Fix → Rejoin funktioniert korrekt
-🎲 Phase 2: Advanced Room Features
-System Presets Extended → Generic + Daggerheart + D&D 5e + WoD + Custom
-Room-wide Variables → GM kann für alle setzen
-Roll Presets → Vordefinierte Würfe pro System (quick rolls aber nicht generisch, quick rolls erstellen und speichernm evtl einfach aus der Roll-Bar)
-👥 Phase 3: GM Features
-GM Roll Requests → Request an Spieler mit Sichtbarkeitsoptionen
-Known Rooms Display → "Wo war ich schon" statt Code-Eingabe
-Room Password Protection → Code + PW System
-🛠 Phase 4: Polish & Rollout
-Local Dice Roller → Dice Test → Standalone Roller (gleiches UI)
-Webspace Rollout → Live-Deployment für Spieler-Tests
-PWA optimisierung
+## Roadmap Overview - Pre-Rollout
 
-neue features. 
+### ⚡ Phase 1: Core Fixes (A, B, C)
+  + Color & Name Backend → Funktionalität fertigstellen
+  + Admin Access Control → Nur für dich sichtbar
+  + Name Persistence Fix → Rejoin funktioniert korrekt
+
+### 🎲 Phase 2: Advanced Room Features
+  + System Presets Extended → Generic + Daggerheart + D&D 5e + WoD + Custom
+  + Room-wide Variables → GM kann für alle setzen
+  + Roll Presets → Vordefinierte Würfe pro System (quick rolls aber nicht generisch, quick rolls erstellen und speichernm evtl einfach aus der Roll-Bar)
+
+### 👥 Phase 3: GM Features
+  + GM Roll Requests → Request an Spieler mit Sichtbarkeitsoptionen
+  + known Rooms Display → "Wo war ich schon" statt Code-Eingabe
+  + Room Password Protection → Code + PW System
+
+### 🛠 Phase 4: Polish & Rollout
+  + Local Dice Roller → Dice Test → Standalone Roller (gleiches UI)
+  + Webspace Rollout → Live-Deployment für Spieler-Tests
+  + PWA optimisierung
+
+### finale neue features. 
  - login link zu raum zum teilen, ggfs auch als qrcode
  - integriere Raum Infos in die Titeleiste
  - app icon und title bar (window name)
 
+--------
 
 # 🎲 DiceRoom - Progressive Web App for RPG Dice Rolling
 
