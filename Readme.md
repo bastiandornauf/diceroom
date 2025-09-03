@@ -1,32 +1,30 @@
-Alles klar—hier ist dein präzises Projektdokument in drei Teilen: (1) Projektbeschreibung, (2) Feature-Beschreibung (funktional & UX), (3) TechReader (Technik & Umsetzung – inkl. Datenmodell, Sicherheit, Realtime-Varianten, Evaluator-Spezifikation, Daggerheart-Regeln, Deploy).
+# DiceRoom
 
-⸻
+## Projektbeschreibung
 
-Projektbeschreibung
+### Arbeitstitel
 
+DiceRoom – geteilte, systemagnostische RPG-Würfel-PWA
 
-
-
-Arbeitstitel: DiceRoom – geteilte, systemagnostische RPG-Würfel-PWA
-
-Elevator Pitch:
+### Elevator Pitch:
 DiceRoom ist eine webbasierte, installierbare App (PWA) für Spielrunden. Spieler treten einem Raum bei und sehen alle Würfe live – inklusive detaillierter Aufschlüsselung (Explodes, Rerolls, Keep/Drop, Erfolge). Eine terminalartige Eingabe plus Schnellbuttons macht häufige Würfe extrem schnell. Variablen, Macros und Presets (z. B. Daggerheart, D&D 5e, WoD, Fate, Shadowrun) werden vom Spielleiter für den Raum bereitgestellt, so dass Spieler nur noch ihre Werte ausfüllen. Spielerfarben sind aus einer kuratierten Palette mit Eindeutigkeit pro Raum.
 
-Zielgruppen:
-	•	Spielleiter:innen, die Online-/Tischrunden mit gemeinsamen Würfeln führen wollen.
-	•	Spieler:innen, die ohne Regelstudium schnell würfeln möchten.
-	•	Systeme mit unterschiedlichen Mechaniken (Pool-Erfolge, D20, FATE, Daggerheart).
+#### Zielgruppen:
 
-Wesentliche Ziele:
-	1.	Synchrone, geteilte Würfe in Räumen (öffentlich/GM/whisper).
-	2.	Einfachste Eingabe + Schnellbuttons, ohne lange Notation zu lernen.
-	3.	System-Presets pro Raum (Variablen-Templates & Macros vordefiniert).
-	4.	Fairness/Auditierbarkeit (Serverwürfe optional, Hash-Belege).
-	5.	Null oder minimale laufende Kosten (statisches Hosting + Free-Tier Backend).
+  •	Spielleiter:innen, die Online-/Tischrunden mit gemeinsamen Würfeln führen wollen.
+  •	Spieler:innen, die ohne Regelstudium schnell würfeln möchten.
+  •	Systeme mit unterschiedlichen Mechaniken (Pool-Erfolge, D20, FATE, Daggerheart).
 
-⸻
+#### Wesentliche Ziele:
 
-Feature-Beschreibung
+  1.	Synchrone, geteilte Würfe in Räumen (öffentlich/GM/whisper).
+  2.	Einfachste Eingabe + Schnellbuttons, ohne lange Notation zu lernen.
+  3.	System-Presets pro Raum (Variablen-Templates & Macros vordefiniert).
+  4.	Fairness/Auditierbarkeit (Serverwürfe optional, Hash-Belege).
+  5.	Null oder minimale laufende Kosten (statisches Hosting + Free-Tier Backend).
+
+
+### Feature-Beschreibung
 
 1) Räume & Rollen
 	•	Räume mit Join-Code/Link.
@@ -93,13 +91,9 @@ Notation: dh aN dN + … t>=X
 	•	Mobile-Optimierung, hoher Kontrast, Monospace, große Touch-Targets.
 	•	DE/EN (Default DE).
 
-⸻
+## TechReader (Umsetzung)
 
-TechReader (Umsetzung)
-
-A) Architekturvarianten (kostenarm)
-
-Option A – Statisches Frontend (IONOS/Webspace) + Supabase (Free-Tier)
+### Statisches Frontend (IONOS/Webspace) + Supabase (Free-Tier)
 
 Warum: echte Realtime, Auth & DB ohne eigenen Server, Free-Tier reicht i. d. R.
 	•	Frontend: React + TypeScript + Vite (PWA), statisch auf IONOS.
@@ -194,27 +188,7 @@ Fairness (optional):
 Vorteile: echte Realtime, saubere Rechte, kein eigener Server.
 Risiken: Abhängigkeit von Drittanbieter (Free-Tier-Limits).
 
-⸻
-
-Option B – Nur IONOS (PHP + MySQL), Long-Polling
-
-Warum: keinerlei externe Dienste. Kein echtes WebSocket-Realtime, aber „quasi live“.
-	•	Frontend: identisch (PWA).
-	•	Backend: 2–4 PHP-Endpunkte (JSON), MySQL-Tabellen wie oben.
-	•	Realtime-Ersatz: Long-Polling (feed.php hält 15–30 s offen oder bis neue Würfe vorhanden sind), Client reconnectet.
-
-Endpunkte (Beispiele):
-	•	POST /api/roll.php → validiert & speichert Roll-Event.
-	•	GET /api/feed.php?room=R&since=TS → liefert neue Events (blockierend bis timeout/neue Daten).
-	•	POST /api/player_upsert.php → Name/Farbe (unique error → 409).
-	•	GET /api/players.php?room=R / GET /api/variables.php …
-
-Vorteile: keine Fremdabhängigkeit, volle Kostenkontrolle.
-Risiken: mehr Aufwand für Rechte/Spam-Schutz; Polling ist weniger „snappy“.
-
-⸻
-
-B) Frontend (für beide Varianten identisch)
+### B) Frontend (für beide Varianten identisch)
 
 Stack: React + TypeScript + Vite → PWA.
 State: UI-State (Zustand/Jotai), Server-State (Supabase-Client oder Fetcher).
@@ -236,9 +210,7 @@ Farb-Vergabelogik:
 	•	Vorschlag: erste freie ID (oder hash-basiert ab Startindex).
 	•	Upsert → bei Unique-Fehler sofort Alternativfarbe anbieten.
 
-⸻
-
-C) Dice-Engine (Evaluator)
+### C) Dice-Engine (Evaluator)
 
 Tokenizer → Parser → AST → Evaluator (deterministische Pass-Reihenfolge):
 	1.	Würfeln (Web Crypto RNG).
@@ -263,9 +235,7 @@ Tests:
 	•	RNG mockbar für deterministische Tests.
 	•	Daggerheart-Sonderfälle: (a) keine a/d, (b) nur a, (c) nur d, (d) a&d, (e) Doubles.
 
-⸻
-
-D) Sicherheit, Rechte, Datenschutz
+### D) Sicherheit, Rechte, Datenschutz
 
 Supabase (RLS):
 	•	Zugriff nur für Raum-Mitglieder.
@@ -283,9 +253,7 @@ Datenschutz:
 	•	Lösch-/Verlassen-Funktionen (Profil/Variablen).
 	•	Rechtliches: kurzer Datenschutzhinweis (keine Cookies außer technisch nötig).
 
-⸻
-
-E) Deploy & Betrieb
+### E) Deploy & Betrieb
 
 Supabase-Variante:
 	1.	Supabase-Projekt (EU) anlegen; URL/Key in .env.
@@ -303,17 +271,13 @@ Monitoring (leicht):
 	•	Konsolen-Log in der App (dev-Toggle).
 	•	Optional: einfache Health-Page /health (PHP) oder Supabase-Statusanzeige im UI.
 
-⸻
-
-F) Performance-Budget
+### F) Performance-Budget
 	•	Roll-Events: < 1 kB JSON/Insert.
 	•	Polling (PHP): 15–30 s Long-Poll, Sofort-Reconnect; Server Timeout < 60 s.
 	•	Supabase: Realtime-Events sofort, kaum Overhead.
 	•	Client: Feed-Liste windowen (z. B. letzte 200 Zeilen im DOM).
 
-⸻
-
-G) QA & Abnahme-Kriterien (MVP)
+### G) QA & Abnahme-Kriterien (MVP)
 	•	Räume: Erstellen/Beitreten/Verlassen; Join-Code funktioniert.
 	•	Profil: Name setzen, einzigartige Farbe enforced.
 	•	Onboarding: Preset lädt; Variablen-Form erscheint; Pflichteinträge erzwungen.
@@ -325,9 +289,7 @@ G) QA & Abnahme-Kriterien (MVP)
 	•	PWA: Installierbar, offline UI-Shell, keine Fehler.
 	•	Ohne Doku nutzbar: Onboarding + Autocomplete + Beispiele reichen aus.
 
-⸻
-
-H) Beispiel-Preset Daggerheart (JSON-Ausschnitt)
+### H) Beispiel-Preset Daggerheart (JSON-Ausschnitt)
 
 variable_templates
 
@@ -352,9 +314,7 @@ raumweite macros
 Schnellbuttons (Empfehlung):
 [ Daggerheart-Wurf ] [ a+1 ] [ a−1 ] [ d+1 ] [ d−1 ] [ +1 ] [ −1 ] [ t>= ]
 
-⸻
-
-I) Kleine Code-Schnipsel
+### I) Kleine Code-Schnipsel
 
 Farbvorschlag (Client):
 
@@ -384,29 +344,19 @@ function evalDh(adv=0, dis=0, mods:number[]=[], tn?:{op:string,value:number}) {
 }
 
 
-⸻
-
-J) Warum dieser Plan „einfach nutzbar“ ist
+### J) Warum dieser Plan „einfach nutzbar“ ist
 	•	SL wählt Preset, die App zeigt nur relevante Variablen und liefert Buttons.
 	•	Spieler geben Werte ein, tippen entweder einen Macro-Button oder „dh a@ADV d@DIS + @BONUS t>=@TN“, wobei Autocomplete/Tooltips helfen.
 	•	Farben/Name sind in 2 Klicks erledigt und einzigartig geregelt.
 	•	Notation ist mächtig, aber mit Beispielen und Buttons überbrückbar – niemand muss sie auswendig lernen.
 
-⸻
+## Feature-Erweiterung: SL-gestützte Roll-Requests
 
-Sehr gutes Feature – das macht die App für Spielleiter:innen wirklich stark. Ich ergänze es dir in der Projektbeschreibung und im TechReader, so dass es sauber in die vorhandene Struktur passt.
-
-⸻
-
-Feature-Erweiterung: SL-gestützte Roll-Requests
-
-Ziel
+### Ziel
 
 Der Spielleiter kann Würfe anfordern (individuell oder an alle Spieler), dabei Sichtbarkeit und Bezeichnung festlegen. Spieler sehen die Anfrage sofort im UI, können mit einem Klick würfeln, und die Ergebnisse werden zurückgeschickt und entsprechend markiert.
 
-⸻
-
-Funktionsweise
+### Funktionsweise
 
 Rollen
 	•	Spielleiter (GM):
@@ -419,9 +369,7 @@ Rollen
 	•	können Akzeptieren & Würfeln (per Klick oder Terminal).
 	•	Ergebnis wird zurück an den Raum/GM geschickt, mit Marker „Antwort auf Roll-Request X“.
 
-⸻
-
-UI-Erweiterung
+### UI-Erweiterung
 
 Für GM
 	•	Button „Roll anfordern“ im Terminal oder als Menüpunkt.
@@ -438,9 +386,7 @@ Für Spieler
 	•	Optional: Spieler können den Ausdruck anpassen (z. B. wenn sie Sonderboni haben).
 	•	Feed-Eintrag: „Alice → Perception = 17 (1d20+@WIS+@PROF)“.
 
-⸻
-
-Datenmodell-Erweiterung
+### Datenmodell-Erweiterung
 
 roll_requests
 
@@ -459,39 +405,31 @@ rolls bekommt ein Zusatzfeld:
 
 alter table public.rolls add column request_id uuid references public.roll_requests(id);
 
+### Flow
 
-⸻
-
-Flow
-	1.	GM erstellt Request → Insert in roll_requests.
-	2.	Clients (Spieler) → Subscribed auf roll_requests → erhalten neuen Request, wenn Empfänger sie einschließt oder recipients=NULL.
-	3.	Spieler würfeln → Insert in rolls, mit request_id = ….
-	4.	GM sieht Ergebnisse (gefiltert nach Request-ID) gesammelt.
-	5.	Feed-Darstellung:
+1.	GM erstellt Request → Insert in roll_requests.
+2.	Clients (Spieler) → Subscribed auf roll_requests → erhalten neuen Request, wenn Empfänger sie einschließt oder recipients=NULL.
+3.	Spieler würfeln → Insert in rolls, mit request_id = ….
+4.	GM sieht Ergebnisse (gefiltert nach Request-ID) gesammelt.
+5.	Feed-Darstellung:
 	•	Request als Card mit Titel.
 	•	Darunter Antworten der Spieler.
 	•	Falls Spieler nicht würfeln → GM sieht offene Antworten.
 
-⸻
-
-UX/Komfort
+### UX/Komfort
 	•	Automatische Befüllung: Spieler sehen den fertigen Ausdruck; Klick = Wurf.
 	•	Anpassbar: Eingabefeld erlaubt Modifikatoren einzutragen.
 	•	Nicht-Blocking: GM kann Request senden, während das Spiel läuft. Spieler reagieren, wenn sie dran sind.
 	•	Option „Auto-Roll“: Spieler können in Settings aktivieren, dass Requests sofort automatisch gewürfelt und zurückgesendet werden (für schnelle Systeme).
 
-⸻
-
-Beispielnutzung
+### Beispielnutzung
 	•	GM klickt: „Roll anfordern → Alle → Label: Perception Check → Ausdruck: 1d20+@WIS+@PROF → Sichtbarkeit: GM-only“.
 	•	Spieler sehen: „Bitte Perception Check“ (mit Knopf „würfeln“).
 	•	Alice klickt → 1d20+3+2=17, Feed zeigt: „Alice: Perception Check = 17 (GM-only)“.
 	•	Bob klickt später, Ergebnis hängt darunter.
 	•	GM sieht gesammelt: Request #42, darunter alle Ergebnisse.
 
-⸻
-
-Technischer Reader – Ergänzung
+### Technischer Reader – Ergänzung
 
 Daten
 	•	roll_requests: neue Tabelle (siehe oben).
@@ -521,8 +459,3 @@ Vorteil
 	•	SL spart sich „Meta-Kommunikation“, alles läuft im Tool.
 	•	Erweiterbar für komplexe Checks (mehrere Würfe, Sequenzen).
 
-⸻
-
-👉 Damit hast du ein vollständiges Feature-Set: Räume, Spielerprofile, Variablen/Macros, Würfelnotation (inkl. Daggerheart), Presets, Sichtbarkeiten, und jetzt auch SL-gestützte Roll-Requests mit Label.
-
-Willst du, dass ich dir das als durchgängigen Flow im Dokument (Projektbeschreibung + Featureliste + TechReader) neu zusammenfasse, also in einer Endfassung, in die du direkt mit deinem Team oder alleine reingehen kannst?
