@@ -2,10 +2,10 @@
 
 ### DONE
   + Color & Name, RoomName Backend → Funktionalität fertigstellen
+  + Name Persistence Fix → Rejoin funktioniert korrekt
 
 ### ⚡ Phase 1: Core Fixes
   + Admin Access Control → Nur für dich sichtbar
-  + Name Persistence Fix → Rejoin funktioniert korrekt
 
 ### 🎲 Phase 2: Advanced Room Features
   + System Presets Extended → Generic + Daggerheart + D&D 5e + WoD + Custom
