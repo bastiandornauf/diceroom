@@ -82,7 +82,16 @@ export function DiceTest() {
           <h3>Result: {result.total}</h3>
           <p><strong>Expression:</strong> {result.expression}</p>
           <p><strong>Breakdown:</strong> {result.breakdown}</p>
-          <p><strong>Individual Rolls:</strong> [{result.rolls.join(', ')}]</p>
+          <p><strong>Individual Rolls:</strong> [
+            {result.rolls.map((roll, index) => {
+              let display = `d${roll.sides === -1 ? 'F' : roll.sides}:${roll.result}`;
+              if (roll.exploded) display += '!';
+              if (roll.dropped) display += '(dropped)';
+              if (roll.rerolled) display += '(rerolled)';
+              if (roll.success) display += '✓';
+              return display;
+            }).join(', ')}
+          ]</p>
           
           {/* Variables used */}
           {result.variables && Object.keys(result.variables).length > 0 && (
