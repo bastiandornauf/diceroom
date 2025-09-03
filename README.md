@@ -1,7 +1,9 @@
 ## Roadmap Overview - Pre-Rollout
 
-### ⚡ Phase 1: Core Fixes (A, B, C)
-  + Color & Name Backend → Funktionalität fertigstellen
+### DONE
+  + Color & Name, RoomName Backend → Funktionalität fertigstellen
+
+### ⚡ Phase 1: Core Fixes
   + Admin Access Control → Nur für dich sichtbar
   + Name Persistence Fix → Rejoin funktioniert korrekt
 
