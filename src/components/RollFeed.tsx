@@ -22,7 +22,7 @@ export function RollFeed({ rolls, players }: RollFeedProps) {
     const player = players.find(p => p.displayName === playerName);
     if (!player) return 'bg-gray-500';
     const colorInfo = COLOR_PALETTE.find(c => c.id === player.colorId);
-    return colorInfo ? colorInfo.class : 'bg-gray-500';d dicecd di
+    return colorInfo ? colorInfo.class : 'bg-gray-500';
   };
 
   const renderRollResult = (result: DiceRoll) => {
