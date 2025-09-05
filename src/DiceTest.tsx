@@ -29,44 +29,61 @@ export function DiceTest() {
 
   const buttonStyle = {
     margin: '5px',
-    padding: '8px 15px',
+    padding: '12px 16px',
     backgroundColor: '#2196F3',
     color: 'white',
     border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer' as const
+    borderRadius: '8px',
+    cursor: 'pointer' as const,
+    minHeight: '44px', // Mobile touch target
+    fontSize: '16px', // Prevent zoom on iOS
+    minWidth: '44px'
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ 
+      padding: '20px', 
+      maxWidth: '600px', 
+      margin: '0 auto',
+      width: '100%' // Mobile: full width
+    }}>
       <h1>🎲 DiceRoom - Dice Test</h1>
       
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ 
+        marginBottom: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px'
+      }}>
         <input
           type="text"
           value={expression}
           onChange={(e) => setExpression(e.target.value)}
           placeholder="Enter dice expression (e.g., 2d6, 1d20+5)"
           style={{
-            padding: '10px',
-            marginRight: '10px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            width: '200px'
+            padding: '12px',
+            border: '2px solid #e5e7eb',
+            borderRadius: '8px',
+            width: '100%',
+            fontSize: '16px', // Prevent zoom on iOS
+            minHeight: '44px'
           }}
         />
         <button
           onClick={handleRoll}
           style={{
-            padding: '10px 20px',
+            padding: '12px 20px',
             backgroundColor: '#4CAF50',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
+            borderRadius: '8px',
+            cursor: 'pointer',
+            minHeight: '44px',
+            fontSize: '16px',
+            width: '100%' // Mobile: full width
           }}
         >
-          Roll Dice
+          🎲 Roll Dice
         </button>
       </div>
 
@@ -133,17 +150,41 @@ export function DiceTest() {
       )}
 
       {/* Variables Panel */}
-      <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+      <div style={{ 
+        marginTop: '30px', 
+        padding: '20px', 
+        backgroundColor: '#f8f9fa', 
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+      }}>
         <h3>Variables (used in expressions with @NAME):</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+          gap: '15px',
+          marginTop: '15px'
+        }}>
           {Object.entries(variables).map(([name, value]) => (
             <div key={name}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>@{name}:</label>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '14px', 
+                fontWeight: 'bold',
+                marginBottom: '5px',
+                color: '#374151'
+              }}>@{name}:</label>
               <input
                 type="number"
                 value={value}
                 onChange={(e) => setVariables(prev => ({ ...prev, [name]: parseInt(e.target.value) || 0 }))}
-                style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '2px' }}
+                style={{ 
+                  width: '100%', 
+                  padding: '12px', 
+                  border: '2px solid #e5e7eb', 
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  minHeight: '44px'
+                }}
               />
             </div>
           ))}
@@ -153,40 +194,68 @@ export function DiceTest() {
       <div style={{ marginTop: '30px' }}>
         <h3>Quick Test Buttons:</h3>
         
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <h4>Basic Dice:</h4>
-          {DICE_EXAMPLES.basic.map((expr) => (
-            <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
-              {expr}
-            </button>
-          ))}
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.basic.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <h4>Advanced Features:</h4>
-          {DICE_EXAMPLES.advanced.map((expr) => (
-            <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
-              {expr}
-            </button>
-          ))}
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.advanced.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <h4>Daggerheart:</h4>
-          {DICE_EXAMPLES.daggerheart.map((expr) => (
-            <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
-              {expr}
-            </button>
-          ))}
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.daggerheart.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <h4>Special Dice:</h4>
-          {DICE_EXAMPLES.special.map((expr) => (
-            <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
-              {expr}
-            </button>
-          ))}
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.special.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

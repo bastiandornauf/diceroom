@@ -112,7 +112,11 @@ export function RollFeed({ rolls, players }: RollFeedProps) {
   }
 
   return (
-    <div className="p-4 space-y-4 max-h-full overflow-y-auto">
+    <div className="p-4 space-y-4 max-h-full overflow-y-auto" style={{
+      padding: '16px',
+      WebkitOverflowScrolling: 'touch',
+      touchAction: 'pan-y'
+    }}>
       {rolls.map((roll) => (
         <div
           key={roll.id}

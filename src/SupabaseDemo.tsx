@@ -52,7 +52,13 @@ export function SupabaseDemo() {
   const isConfigured = isSupabaseConfigured();
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+    <div style={{ 
+      padding: '20px', 
+      fontFamily: 'monospace',
+      width: '100%',
+      maxWidth: '600px',
+      margin: '0 auto'
+    }}>
       <h2>🎲 DiceRoom - Supabase Integration Test</h2>
       
       <div style={{ 
@@ -73,13 +79,25 @@ export function SupabaseDemo() {
 
       <div style={{ marginBottom: '20px' }}>
         <h3>Player Setup</h3>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Player Name: </label>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ 
+            display: 'block', 
+            marginBottom: '8px',
+            fontWeight: 'bold',
+            fontSize: '14px'
+          }}>Player Name:</label>
           <input 
             type="text" 
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            style={{ marginLeft: '10px', padding: '5px' }}
+            style={{ 
+              width: '100%',
+              padding: '12px', 
+              border: '2px solid #e5e7eb',
+              borderRadius: '8px',
+              fontSize: '16px',
+              minHeight: '44px'
+            }}
           />
         </div>
       </div>
@@ -89,40 +107,53 @@ export function SupabaseDemo() {
         <button 
           onClick={handleCreateRoom}
           style={{
-            padding: '10px 20px',
+            padding: '12px 20px',
             backgroundColor: '#007bff',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
+            borderRadius: '8px',
+            cursor: 'pointer',
+            minHeight: '44px',
+            fontSize: '16px',
+            width: '100%'
           }}
         >
-          Create New Room
+          🏠 Create New Room
         </button>
       </div>
 
       <div style={{ marginBottom: '20px' }}>
         <h3>Join Room</h3>
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <input 
             type="text" 
             placeholder="Enter join code"
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-            style={{ padding: '5px', marginRight: '10px' }}
+            style={{ 
+              padding: '12px', 
+              border: '2px solid #e5e7eb',
+              borderRadius: '8px',
+              fontSize: '16px',
+              minHeight: '44px',
+              width: '100%'
+            }}
           />
           <button 
             onClick={handleJoinRoom}
             style={{
-              padding: '10px 20px',
+              padding: '12px 20px',
               backgroundColor: '#28a745',
               color: 'white',
               border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
+              borderRadius: '8px',
+              cursor: 'pointer',
+              minHeight: '44px',
+              fontSize: '16px',
+              width: '100%'
             }}
           >
-            Join Room
+            🚪 Join Room
           </button>
         </div>
       </div>
