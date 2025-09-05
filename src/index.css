@@ -28,6 +28,10 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* Mobile scrolling fixes */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 h1 {
@@ -52,6 +56,27 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Mobile scrolling improvements */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+/* Ensure all main containers can scroll on mobile */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  #root {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (prefers-color-scheme: light) {
