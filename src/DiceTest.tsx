@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { rollDice, DICE_EXAMPLES, type DiceResult } from './dice-main';
+import { LastMinuteDialog } from './components/LastMinuteDialog';
 
 export function DiceTest() {
   const [expression, setExpression] = useState('2d6');
   const [result, setResult] = useState<DiceResult | null>(null);
+  const [lastMinuteDialog, setLastMinuteDialog] = useState<{
+    isOpen: boolean;
+    variables: Array<{name: string, label?: string, defaultValue?: number}>;
+  }>({ isOpen: false, variables: [] });
 
   const [variables, setVariables] = useState<Record<string, number>>({
     STR: 3,
@@ -18,13 +23,39 @@ export function DiceTest() {
 
   const handleRoll = () => {
     const rollResult = rollDice(expression, variables);
+    
+    if (rollResult.needsLastMinuteVars) {
+      setLastMinuteDialog({
+        isOpen: true,
+        variables: rollResult.needsLastMinuteVars
+      });
+    } else {
+      setResult(rollResult);
+    }
+  };
+
+  const handleLastMinuteConfirm = (lastMinuteValues: Record<string, number>) => {
+    const rollResult = rollDice(expression, variables, lastMinuteValues);
     setResult(rollResult);
+    setLastMinuteDialog({ isOpen: false, variables: [] });
+  };
+
+  const handleLastMinuteCancel = () => {
+    setLastMinuteDialog({ isOpen: false, variables: [] });
   };
 
   const testExpression = (expr: string) => {
     setExpression(expr);
     const rollResult = rollDice(expr, variables);
-    setResult(rollResult);
+    
+    if (rollResult.needsLastMinuteVars) {
+      setLastMinuteDialog({
+        isOpen: true,
+        variables: rollResult.needsLastMinuteVars
+      });
+    } else {
+      setResult(rollResult);
+    }
   };
 
   const buttonStyle = {
@@ -106,6 +137,8 @@ export function DiceTest() {
               if (roll.dropped) display += '(dropped)';
               if (roll.rerolled) display += '(rerolled)';
               if (roll.success) display += '✓';
+              if (roll.critical) display += '*';
+              if (roll.fumble) display += '**';
               return display;
             }).join(', ')}
           ]</p>
@@ -257,7 +290,47 @@ export function DiceTest() {
             ))}
           </div>
         </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h4>Crit/Fumble System:</h4>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.critfumble.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h4>Last Minute Variables:</h4>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.lastminute.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Last Minute Variables Dialog */}
+      <LastMinuteDialog
+        variables={lastMinuteDialog.variables}
+        onConfirm={handleLastMinuteConfirm}
+        onCancel={handleLastMinuteCancel}
+        isOpen={lastMinuteDialog.isOpen}
+      />
     </div>
   );
 }

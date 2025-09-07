@@ -35,13 +35,52 @@ function compareRoll(roll: number, operator: string, target: number): boolean {
   }
 }
 
+export function extractLastMinuteVariables(expression: string): Array<{name: string, label?: string, defaultValue?: number}> {
+  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)(?:\|([A-Z_][A-Z0-9_]*))?(?:=(\d+))?\)/g);
+  if (!matches) return [];
+  
+  return matches.map(match => {
+    const nameMatch = match.match(/\(\?([A-Z_][A-Z0-9_]*)(?:\|([A-Z_][A-Z0-9_]*))?(?:=(\d+))?\)/);
+    if (!nameMatch) return { name: '', label: undefined, defaultValue: undefined };
+    
+    const name = nameMatch[1];
+    const label = nameMatch[2] || undefined;
+    const defaultValue = nameMatch[3] ? parseInt(nameMatch[3]) : undefined;
+    return { name, label, defaultValue };
+  });
+}
+
 /**
  * Main dice rolling function with universal notation support
  */
-export function rollDice(expression: string, variables: Record<string, number> = {}): DiceResult {
+export function rollDice(expression: string, variables: Record<string, number> = {}, lastMinuteVars?: Record<string, number>): DiceResult {
   try {
     let expr = expression.toLowerCase().trim();
     const usedVariables: Record<string, number> = {};
+    
+    // Check for last minute variables (?NAME or ?NAME=DEFAULT)
+    const requiredLastMinuteVars = extractLastMinuteVariables(expr);
+    if (requiredLastMinuteVars.length > 0 && !lastMinuteVars) {
+      return {
+        expression,
+        total: 0,
+        breakdown: `Needs last minute variables: ${requiredLastMinuteVars.map(v => v.name).join(', ')}`,
+        rolls: [],
+        needsLastMinuteVars: requiredLastMinuteVars,
+        variables: usedVariables
+      };
+    }
+    
+    // Replace last minute variables if provided
+    if (lastMinuteVars) {
+      for (const [name, value] of Object.entries(lastMinuteVars)) {
+        const regex = new RegExp(`\\(\\?${name.toLowerCase()}(?:\\|[^|)]+)?(?:=\\d+)?\\)`, 'g');
+        if (expr.includes(`(?${name.toLowerCase()}`)) {
+          expr = expr.replace(regex, value.toString());
+          usedVariables[name] = value;
+        }
+      }
+    }
     
     // Replace variables
     for (const [name, value] of Object.entries(variables)) {
@@ -398,6 +437,30 @@ function applyModifiers(
         }
       }
     }
+    
+    // Handle critical successes and fumbles
+    const critMatch = modifiers.match(/c(\d+)/);
+    const fumbleMatch = modifiers.match(/f(\d+)/);
+    
+    if (critMatch) {
+      const critValue = parseInt(critMatch[1]);
+      for (const roll of workingRolls) {
+        if (!roll.dropped && !roll.rerolled && roll.result === critValue) {
+          roll.critical = true;
+          successCount++; // +1 for critical success
+        }
+      }
+    }
+    
+    if (fumbleMatch) {
+      const fumbleValue = parseInt(fumbleMatch[1]);
+      for (const roll of workingRolls) {
+        if (!roll.dropped && !roll.rerolled && roll.result === fumbleValue) {
+          roll.fumble = true;
+          successCount--; // -1 for fumble
+        }
+      }
+    }
   }
   
   // Calculate final value
@@ -421,6 +484,8 @@ function applyModifiers(
       let str = r.result.toString();
       if (r.exploded) str += '!';
       if (r.success) str += '✓';
+      if (r.critical) str += '*';
+      if (r.fumble) str += '**';
       return str;
     });
     breakdown += ` (${results.join(', ')})`;
@@ -428,6 +493,8 @@ function applyModifiers(
     let str = activeRolls[0].result.toString();
     if (activeRolls[0].exploded) str += '!';
     if (activeRolls[0].success) str += '✓';
+    if (activeRolls[0].critical) str += '*';
+    if (activeRolls[0].fumble) str += '**';
     breakdown += ` (${str})`;
   }
   

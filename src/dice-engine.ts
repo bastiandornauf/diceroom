@@ -166,6 +166,11 @@ export class DiceTokenizer {
     } else if (this.current === '!') {
       result += this.current;
       this.advance();
+    } else if (this.current === 'c' || this.current === 'f') {
+      // Handle crit (c1) and fumble (f12) modifiers
+      result += this.current;
+      this.advance();
+      // The number will be parsed separately
     }
     
     return result;
@@ -241,7 +246,7 @@ export class DiceTokenizer {
         const value = this.readComparison();
         tokens.push({ type: TokenType.COMPARISON, value, position: startPos });
       }
-      else if (this.current === 'k' || this.current === 'r' || this.current === '!') {
+      else if (this.current === 'k' || this.current === 'r' || this.current === '!' || this.current === 'c' || this.current === 'f') {
         const value = this.readModifier();
         tokens.push({ type: TokenType.MODIFIER, value, position: startPos });
       }
@@ -385,6 +390,26 @@ export class DiceParser {
               type: 'reroll',
               operator: roCondition as '>=' | '>' | '=' | '<=' | '<',
               value: roValue
+            });
+            break;
+            
+          case 'c':
+            // Critical success modifier (c1, c20, etc.)
+            const critValue = this.current().type === TokenType.NUMBER ? 
+              this.parseNumber().value : 1; // Default to 1
+            modifiers.push({
+              type: 'crit',
+              critValue: critValue
+            });
+            break;
+            
+          case 'f':
+            // Fumble modifier (f12, f1, etc.)
+            const fumbleValue = this.current().type === TokenType.NUMBER ? 
+              this.parseNumber().value : 12; // Default to 12
+            modifiers.push({
+              type: 'fumble',
+              fumbleValue: fumbleValue
             });
             break;
         }

@@ -174,6 +174,30 @@ export class DiceEvaluator {
           }
         }
       }
+      
+      // Step 5: Apply critical successes and fumbles
+      const critMod = modifiers.find(m => m.type === 'crit');
+      const fumbleMod = modifiers.find(m => m.type === 'fumble');
+      
+      if (critMod) {
+        const critValue = critMod.critValue || 1;
+        for (const roll of workingRolls) {
+          if (!roll.dropped && !roll.rerolled && roll.result === critValue) {
+            roll.critical = true;
+            successes++; // +1 for critical success
+          }
+        }
+      }
+      
+      if (fumbleMod) {
+        const fumbleValue = fumbleMod.fumbleValue || 12;
+        for (const roll of workingRolls) {
+          if (!roll.dropped && !roll.rerolled && roll.result === fumbleValue) {
+            roll.fumble = true;
+            successes--; // -1 for fumble
+          }
+        }
+      }
     }
 
     return { finalRolls: workingRolls, successes };
@@ -396,6 +420,8 @@ export class DiceEvaluator {
             let str = r.result.toString();
             if (r.exploded) str += '!';
             if (r.success) str += '✓';
+            if (r.critical) str += '*';
+            if (r.fumble) str += '**';
             return str;
           });
           part += ` (${results.join(', ')})`;
@@ -403,6 +429,8 @@ export class DiceEvaluator {
           let str = activeRolls[0].result.toString();
           if (activeRolls[0].exploded) str += '!';
           if (activeRolls[0].success) str += '✓';
+          if (activeRolls[0].critical) str += '*';
+          if (activeRolls[0].fumble) str += '**';
           part += ` (${str})`;
         }
         
