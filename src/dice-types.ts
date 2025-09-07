@@ -8,6 +8,8 @@ export interface DiceRoll {
   dropped?: boolean;
   rerolled?: boolean;
   success?: boolean;
+  critical?: boolean;
+  fumble?: boolean;
 }
 
 export interface DiceResult {
@@ -71,11 +73,13 @@ export interface TargetNode extends ASTNode {
 }
 
 export interface DiceModifier {
-  type: 'keep' | 'drop' | 'explode' | 'reroll' | 'success';
+  type: 'keep' | 'drop' | 'explode' | 'reroll' | 'success' | 'crit' | 'fumble';
   variant?: 'high' | 'low' | 'once';
   value?: number | VariableNode;
   operator?: '>=' | '>' | '=' | '<=' | '<';
   limit?: number;
+  critValue?: number;
+  fumbleValue?: number;
 }
 
 // Token types for parsing
@@ -107,5 +111,6 @@ export const DICE_EXAMPLES = {
   basic: ['1d20', '2d6+3', '4d6kh3', '1d20+5'],
   advanced: ['2d20kh1', '2d20kl1', '4d6!', '6d6>=4', '3d6r1', '1d20+5 t>=15'],
   daggerheart: ['dh', 'dh a2', 'dh d1', 'dh a2 d1'],
-  special: ['4dF', 'adv', 'dis', '2d10!>=8']
+  special: ['4dF', 'adv', 'dis', '2d10!>=8'],
+  critfumble: ['6d12>=8 c1', '6d12<=3 f12', '6d12>=6 c1 f12', '4d20>=15 c20 f1']
 };

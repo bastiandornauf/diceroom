@@ -106,6 +106,8 @@ export function DiceTest() {
               if (roll.dropped) display += '(dropped)';
               if (roll.rerolled) display += '(rerolled)';
               if (roll.success) display += '✓';
+              if (roll.critical) display += '*';
+              if (roll.fumble) display += '**';
               return display;
             }).join(', ')}
           ]</p>
@@ -251,6 +253,22 @@ export function DiceTest() {
             marginTop: '10px'
           }}>
             {DICE_EXAMPLES.special.map((expr) => (
+              <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
+                {expr}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h4>Crit/Fumble System:</h4>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: '8px',
+            marginTop: '10px'
+          }}>
+            {DICE_EXAMPLES.critfumble.map((expr) => (
               <button key={expr} onClick={() => testExpression(expr)} style={buttonStyle}>
                 {expr}
               </button>

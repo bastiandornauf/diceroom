@@ -398,6 +398,30 @@ function applyModifiers(
         }
       }
     }
+    
+    // Handle critical successes and fumbles
+    const critMatch = modifiers.match(/c(\d+)/);
+    const fumbleMatch = modifiers.match(/f(\d+)/);
+    
+    if (critMatch) {
+      const critValue = parseInt(critMatch[1]);
+      for (const roll of workingRolls) {
+        if (!roll.dropped && !roll.rerolled && roll.result === critValue) {
+          roll.critical = true;
+          successCount++; // +1 for critical success
+        }
+      }
+    }
+    
+    if (fumbleMatch) {
+      const fumbleValue = parseInt(fumbleMatch[1]);
+      for (const roll of workingRolls) {
+        if (!roll.dropped && !roll.rerolled && roll.result === fumbleValue) {
+          roll.fumble = true;
+          successCount--; // -1 for fumble
+        }
+      }
+    }
   }
   
   // Calculate final value
@@ -421,6 +445,8 @@ function applyModifiers(
       let str = r.result.toString();
       if (r.exploded) str += '!';
       if (r.success) str += '✓';
+      if (r.critical) str += '*';
+      if (r.fumble) str += '**';
       return str;
     });
     breakdown += ` (${results.join(', ')})`;
@@ -428,6 +454,8 @@ function applyModifiers(
     let str = activeRolls[0].result.toString();
     if (activeRolls[0].exploded) str += '!';
     if (activeRolls[0].success) str += '✓';
+    if (activeRolls[0].critical) str += '*';
+    if (activeRolls[0].fumble) str += '**';
     breakdown += ` (${str})`;
   }
   
