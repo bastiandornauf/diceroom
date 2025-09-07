@@ -35,11 +35,18 @@ function compareRoll(roll: number, operator: string, target: number): boolean {
   }
 }
 
-export function extractLastMinuteVariables(expression: string): string[] {
-  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)\)/g);
+export function extractLastMinuteVariables(expression: string): Array<{name: string, defaultValue?: number}> {
+  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)(?:=(\d+))?\)/g);
   if (!matches) return [];
   
-  return matches.map(match => match.slice(2, -1)); // Remove (? and )
+  return matches.map(match => {
+    const nameMatch = match.match(/\(\?([A-Z_][A-Z0-9_]*)(?:=(\d+))?\)/);
+    if (!nameMatch) return { name: '', defaultValue: undefined };
+    
+    const name = nameMatch[1];
+    const defaultValue = nameMatch[2] ? parseInt(nameMatch[2]) : undefined;
+    return { name, defaultValue };
+  });
 }
 
 /**
@@ -50,13 +57,13 @@ export function rollDice(expression: string, variables: Record<string, number> =
     let expr = expression.toLowerCase().trim();
     const usedVariables: Record<string, number> = {};
     
-    // Check for last minute variables (?NAME)
+    // Check for last minute variables (?NAME or ?NAME=DEFAULT)
     const requiredLastMinuteVars = extractLastMinuteVariables(expr);
     if (requiredLastMinuteVars.length > 0 && !lastMinuteVars) {
       return {
         expression,
         total: 0,
-        breakdown: `Needs last minute variables: ${requiredLastMinuteVars.join(', ')}`,
+        breakdown: `Needs last minute variables: ${requiredLastMinuteVars.map(v => v.name).join(', ')}`,
         rolls: [],
         needsLastMinuteVars: requiredLastMinuteVars,
         variables: usedVariables
@@ -66,8 +73,8 @@ export function rollDice(expression: string, variables: Record<string, number> =
     // Replace last minute variables if provided
     if (lastMinuteVars) {
       for (const [name, value] of Object.entries(lastMinuteVars)) {
-        const regex = new RegExp(`\\(\\?${name.toLowerCase()}\\)`, 'g');
-        if (expr.includes(`(?${name.toLowerCase()})`)) {
+        const regex = new RegExp(`\\(\\?${name.toLowerCase()}(?:=\\d+)?\\)`, 'g');
+        if (expr.includes(`(?${name.toLowerCase()}`)) {
           expr = expr.replace(regex, value.toString());
           usedVariables[name] = value;
         }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface LastMinuteDialogProps {
-  variables: string[];
+  variables: Array<{name: string, defaultValue?: number}>;
   onConfirm: (values: Record<string, number>) => void;
   onCancel: () => void;
   isOpen: boolean;
@@ -12,10 +12,10 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
 
   useEffect(() => {
     if (isOpen) {
-      // Initialize values with 0
+      // Initialize values with defaults or 0
       const initialValues: Record<string, number> = {};
       variables.forEach(variable => {
-        initialValues[variable] = 0;
+        initialValues[variable.name] = variable.defaultValue || 0;
       });
       setValues(initialValues);
     }
@@ -26,10 +26,10 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
     onConfirm(values);
   };
 
-  const handleValueChange = (variable: string, value: string) => {
+  const handleValueChange = (variableName: string, value: string) => {
     setValues(prev => ({
       ...prev,
-      [variable]: parseInt(value) || 0
+      [variableName]: parseInt(value) || 0
     }));
   };
 
@@ -77,7 +77,7 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             {variables.map(variable => (
-              <div key={variable} style={{ marginBottom: '15px' }}>
+              <div key={variable.name} style={{ marginBottom: '15px' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '16px',
@@ -85,12 +85,22 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
                   marginBottom: '5px',
                   color: '#374151'
                 }}>
-                  {variable}:
+                  {variable.name}:
+                  {variable.defaultValue !== undefined && (
+                    <span style={{
+                      fontSize: '12px',
+                      fontWeight: 'normal',
+                      color: '#6b7280',
+                      marginLeft: '8px'
+                    }}>
+                      (default: {variable.defaultValue})
+                    </span>
+                  )}
                 </label>
                 <input
                   type="number"
-                  value={values[variable] || 0}
-                  onChange={(e) => handleValueChange(variable, e.target.value)}
+                  value={values[variable.name] || 0}
+                  onChange={(e) => handleValueChange(variable.name, e.target.value)}
                   style={{
                     width: '100%',
                     padding: '12px',
@@ -100,7 +110,7 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
                     minHeight: '44px',
                     boxSizing: 'border-box'
                   }}
-                  autoFocus={variable === variables[0]}
+                  autoFocus={variable.name === variables[0]?.name}
                 />
               </div>
             ))}
