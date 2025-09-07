@@ -35,17 +35,18 @@ function compareRoll(roll: number, operator: string, target: number): boolean {
   }
 }
 
-export function extractLastMinuteVariables(expression: string): Array<{name: string, defaultValue?: number}> {
-  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)(?:=(\d+))?\)/g);
+export function extractLastMinuteVariables(expression: string): Array<{name: string, label?: string, defaultValue?: number}> {
+  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)(?:\|([A-Z_][A-Z0-9_]*))?(?:=(\d+))?\)/g);
   if (!matches) return [];
   
   return matches.map(match => {
-    const nameMatch = match.match(/\(\?([A-Z_][A-Z0-9_]*)(?:=(\d+))?\)/);
-    if (!nameMatch) return { name: '', defaultValue: undefined };
+    const nameMatch = match.match(/\(\?([A-Z_][A-Z0-9_]*)(?:\|([A-Z_][A-Z0-9_]*))?(?:=(\d+))?\)/);
+    if (!nameMatch) return { name: '', label: undefined, defaultValue: undefined };
     
     const name = nameMatch[1];
-    const defaultValue = nameMatch[2] ? parseInt(nameMatch[2]) : undefined;
-    return { name, defaultValue };
+    const label = nameMatch[2] || undefined;
+    const defaultValue = nameMatch[3] ? parseInt(nameMatch[3]) : undefined;
+    return { name, label, defaultValue };
   });
 }
 
@@ -73,7 +74,7 @@ export function rollDice(expression: string, variables: Record<string, number> =
     // Replace last minute variables if provided
     if (lastMinuteVars) {
       for (const [name, value] of Object.entries(lastMinuteVars)) {
-        const regex = new RegExp(`\\(\\?${name.toLowerCase()}(?:=\\d+)?\\)`, 'g');
+        const regex = new RegExp(`\\(\\?${name.toLowerCase()}(?:\\|[^|)]+)?(?:=\\d+)?\\)`, 'g');
         if (expr.includes(`(?${name.toLowerCase()}`)) {
           expr = expr.replace(regex, value.toString());
           usedVariables[name] = value;

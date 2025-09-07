@@ -7,7 +7,7 @@ export function DiceTest() {
   const [result, setResult] = useState<DiceResult | null>(null);
   const [lastMinuteDialog, setLastMinuteDialog] = useState<{
     isOpen: boolean;
-    variables: Array<{name: string, defaultValue?: number}>;
+    variables: Array<{name: string, label?: string, defaultValue?: number}>;
   }>({ isOpen: false, variables: [] });
 
   const [variables, setVariables] = useState<Record<string, number>>({

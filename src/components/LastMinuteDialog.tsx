@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface LastMinuteDialogProps {
-  variables: Array<{name: string, defaultValue?: number}>;
+  variables: Array<{name: string, label?: string, defaultValue?: number}>;
   onConfirm: (values: Record<string, number>) => void;
   onCancel: () => void;
   isOpen: boolean;
@@ -85,7 +85,7 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
                   marginBottom: '5px',
                   color: '#374151'
                 }}>
-                  {variable.name}:
+                  {variable.label ? variable.label.replace(/_/g, ' ') : variable.name}:
                 </label>
                 <input
                   type="number"

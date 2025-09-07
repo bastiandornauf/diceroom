@@ -27,7 +27,7 @@ export interface DiceResult {
   fear?: number;
   tag?: string;
   variables?: Record<string, number>;
-  needsLastMinuteVars?: Array<{name: string, defaultValue?: number}>;
+  needsLastMinuteVars?: Array<{name: string, label?: string, defaultValue?: number}>;
 }
 
 // AST Node types for advanced parsing
@@ -122,6 +122,10 @@ export const DICE_EXAMPLES = {
     '(?ATTRIB=12)d12>=(?SKILL=8)', 
     '(?BONUS=3)d6+5', 
     '(?DICE=6)d(?SIDES=12)>=(?TARGET=8)',
-    '(?COUNT=4)d12>=8 c1 f12'
+    '(?COUNT=4)d12>=8 c1 f12',
+    '(?ATTRIB|Attack_Defense)d12>=(?SKILL|Skill_Level)', 
+    '(?BONUS|Damage_Bonus=3)d6+5', 
+    '(?DICE|Dice_Count=6)d(?SIDES|Dice_Sides=12)>=(?TARGET|Target_Number=8)',
+    '(?SKILLED=1|Skill_Learned)d12>=8 c(?SKILLED)'
   ]
 };
