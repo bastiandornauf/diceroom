@@ -86,16 +86,6 @@ export function LastMinuteDialog({ variables, onConfirm, onCancel, isOpen }: Las
                   color: '#374151'
                 }}>
                   {variable.name}:
-                  {variable.defaultValue !== undefined && (
-                    <span style={{
-                      fontSize: '12px',
-                      fontWeight: 'normal',
-                      color: '#6b7280',
-                      marginLeft: '8px'
-                    }}>
-                      (default: {variable.defaultValue})
-                    </span>
-                  )}
                 </label>
                 <input
                   type="number"
