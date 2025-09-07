@@ -27,6 +27,7 @@ export interface DiceResult {
   fear?: number;
   tag?: string;
   variables?: Record<string, number>;
+  needsLastMinuteVars?: string[];
 }
 
 // AST Node types for advanced parsing
@@ -112,5 +113,6 @@ export const DICE_EXAMPLES = {
   advanced: ['2d20kh1', '2d20kl1', '4d6!', '6d6>=4', '3d6r1', '1d20+5 t>=15'],
   daggerheart: ['dh', 'dh a2', 'dh d1', 'dh a2 d1'],
   special: ['4dF', 'adv', 'dis', '2d10!>=8'],
-  critfumble: ['6d12>=8 c1', '6d12<=3 f12', '6d12>=6 c1 f12', '4d20>=15 c20 f1']
+  critfumble: ['6d12>=8 c1', '6d12<=3 f12', '6d12>=6 c1 f12', '4d20>=15 c20 f1'],
+  lastminute: ['(?ATTRIB)d12>=(?SKILL)', '(?BONUS)d6+5', '(?DICE)d(?SIDES)>=(?TARGET)', '(?COUNT)d12>=8 c1 f12']
 };

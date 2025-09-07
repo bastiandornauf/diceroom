@@ -35,13 +35,44 @@ function compareRoll(roll: number, operator: string, target: number): boolean {
   }
 }
 
+export function extractLastMinuteVariables(expression: string): string[] {
+  const matches = expression.match(/\(\?([A-Z_][A-Z0-9_]*)\)/g);
+  if (!matches) return [];
+  
+  return matches.map(match => match.slice(2, -1)); // Remove (? and )
+}
+
 /**
  * Main dice rolling function with universal notation support
  */
-export function rollDice(expression: string, variables: Record<string, number> = {}): DiceResult {
+export function rollDice(expression: string, variables: Record<string, number> = {}, lastMinuteVars?: Record<string, number>): DiceResult {
   try {
     let expr = expression.toLowerCase().trim();
     const usedVariables: Record<string, number> = {};
+    
+    // Check for last minute variables (?NAME)
+    const requiredLastMinuteVars = extractLastMinuteVariables(expr);
+    if (requiredLastMinuteVars.length > 0 && !lastMinuteVars) {
+      return {
+        expression,
+        total: 0,
+        breakdown: `Needs last minute variables: ${requiredLastMinuteVars.join(', ')}`,
+        rolls: [],
+        needsLastMinuteVars: requiredLastMinuteVars,
+        variables: usedVariables
+      };
+    }
+    
+    // Replace last minute variables if provided
+    if (lastMinuteVars) {
+      for (const [name, value] of Object.entries(lastMinuteVars)) {
+        const regex = new RegExp(`\\(\\?${name.toLowerCase()}\\)`, 'g');
+        if (expr.includes(`(?${name.toLowerCase()})`)) {
+          expr = expr.replace(regex, value.toString());
+          usedVariables[name] = value;
+        }
+      }
+    }
     
     // Replace variables
     for (const [name, value] of Object.entries(variables)) {
